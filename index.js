@@ -13,7 +13,6 @@ mongoose.connect('mongodb+srv://nymsak:Popersia12@cluster0-ubw8m.mongodb.net/cou
 const port = process.env.PORT || 3001;
 
 app.use(bodyParser.json());
-app.use(cors());
 app.use(express.static('client/build'));
 app.set('json spaces', 40);
 
