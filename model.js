@@ -5,6 +5,7 @@ const Schema = mongoose.Schema(
         name: String,
         facebookID: String,
         accessToken: String,
+        voted: String
     },
     { collection: "users" }
 );

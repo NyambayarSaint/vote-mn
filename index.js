@@ -7,6 +7,7 @@ const cors = require('cors')
 
 const mongoose = require('mongoose');
 const user = require('./model');
+const participants = require('./participants');
 
 mongoose.connect('mongodb+srv://nymsak:Popersia12@cluster0-ubw8m.mongodb.net/counter?retryWrites=true&w=majority');
 
@@ -21,6 +22,34 @@ app.get('', (req, res) => {
     res.sendFile(path.join(__dirname + '/client/build/index.html'))
 });
 
+app.post('/vote', async (req, res) =>{
+    const {requestingPlayerName, facebook, sender} = req.body;
+
+    const all = await participants.find();
+    let contin = true
+    all.map((player)=>player.votes.map((vote)=>{
+        // if any vote has found with this facebook ID then stop further operation
+        if(vote.facebookID === facebook) contin = false
+    }));
+    
+    // SEND ERROR IF USER HAS VOTED ALREADY
+    if(!contin) return res.status(403).send('Та саналаа өгсөн байна!');
+
+    // CONTINUE
+    const requestingPlayer = await participants.findOne({name: requestingPlayerName});
+    requestingPlayer.votes.push({facebookID: facebook, name: sender});
+    await participants.findOneAndUpdate({name: requestingPlayerName}, requestingPlayer);
+
+    await user.findOneAndUpdate({facebookID: facebook}, {voted: requestingPlayerName});
+
+    res.status(200).send({voted: requestingPlayerName});
+})
+
+app.get('/get-info', async (req, res)=>{
+    const participants2 = await participants.find({});
+    res.status(200).send({ participants: participants2 });
+})
+
 app.post('/login-with-facebook', async (req, res) => {
     const {accessToken, userID} = req.body
 
@@ -28,38 +57,22 @@ app.post('/login-with-facebook', async (req, res) => {
     const json = await response.json();
 
     if(json.id === userID){
-        // a valid user
-        // check here if the user existing db, then login, else register and then login
 
         const resp = await user.findOne({ facebookID: userID});
+        const participants2 = await participants.find({});
 
         if(resp){
-            console.log('start')
-            console.log(resp)
-            res.json({status: 'ok', data: 'You are logged in', ...resp});
-            console.log('You are logged in')
+            res.status(200).send({ person: resp, participants: participants2 })
         }
         else{
-            const person = new user({
-                name: json.name,
-                facebookID: userID,
-                accessToken
-            })
-
+            const person = new user({ name: json.name, facebookID: userID, accessToken})
             await person.save();
 
-            res.json({status: 'ok', data: 'You are registered and logged in'});
-            console.log('You are registered and logged in')
+            res.status(200).send({ person: resp, participants: participants2 })
         }
 
     }
-    else{
-        // impersonate someone
-        // just send a warning
-        res.json({status: 'error', data: 'Don\'t try to f with us'});
-        console.log('Don\'t try to f with us')
-
-    }
+    else res.status(403).send({status: 'error', data: 'Don\'t try to f with us'});
 
 });
 
@@ -67,4 +80,4 @@ app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname + '/client/build/index.html'));
 });
 
-app.listen(port, _ => console.log('listening'));
+app.listen(port, _ => console.log('listening'))

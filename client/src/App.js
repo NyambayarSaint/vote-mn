@@ -1,44 +1,77 @@
 import React, { useEffect, useState } from "react";
-var FB = window.FB;
+import axios from 'axios'
+import Main from "./Main";
 
 function App() {
-    useEffect(() => {
-      // FB.api('/me', {fields: 'last_name'}, function(response) {
-      //   console.log(response);
-      // });
-    }, []);
 
-    const [token, setToken] = useState(null)
-    const [id, setId] = useState(null)
+    const [token, setToken] = useState(null);
+    const [id, setId] = useState(null);
+    const [name, setName] = useState(null);
+    const [participants, setParticipants] = useState([]);
+    const [alreadyVoted, setAlreadyVoted] = useState('');
+    const [loaded, setLoaded] = useState(false);
+    const [anonymous, setAnonymous] = useState(false);
 
     const loginWithFacebook = () => {
-        if(FB){
-          FB.login((response) => {
+        if(window.FB){
+        window.FB.login((response) => {
+            if(!response || !response.authResponse) return document.location.reload();
             const {authResponse:{accessToken, userID}} = response
-            setToken(accessToken);
-            setId(userID);
-            // console.log(accessToken,'access token')
-            // console.log(userID,'user id ')
-            fetch('/login-with-facebook', {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/json'
-              },
-              body: JSON.stringify({accessToken, userID})
-            }).then(res => {
-              console.log(res,'heey');
+            localStorage.setItem('acto', accessToken);
+            localStorage.setItem('usid', userID);
+            axios.post('/login-with-facebook', {accessToken, userID}).then((res)=>{
+                if(res.status !== 200) return window.alert('Нэвтрэхэд алдаа гарлаа!');
+                accessToken && setToken(accessToken);
+                userID && setId(userID);
+                res.data.person.name && setName(res.data.person.name)
+                res.data.participants && setParticipants(res.data.participants)
+                res.data.person.voted && setAlreadyVoted(res.data.person.voted);
+                setLoaded(true);
+                document.location.reload();
+            }).catch((err)=>{
+                localStorage.removeItem("acto");
+                localStorage.removeItem("usid");
+                document.location.reload();
             });
         },{scope: 'public_profile,email'});
         }
         else{
-          document.location.reload();
+        document.location.reload();
         }
     };
 
+    useEffect(()=>{
+        if(localStorage.getItem('acto') && localStorage.getItem('usid')){
+            const accessToken = localStorage.getItem('acto');
+            const userID = localStorage.getItem('usid');
+            axios.post('/login-with-facebook', {accessToken, userID}).then((res)=>{
+                if(res.status !== 200) return window.alert('Нэвтрэхэд алдаа гарлаа!');
+                accessToken && setToken(accessToken);
+                userID && setId(userID);
+                res.data.person.name && setName(res.data.person.name)
+                res.data.participants && setParticipants(res.data.participants)
+                res.data.person.voted && setAlreadyVoted(res.data.person.voted);
+                setLoaded(true);
+            }).catch((err)=>{
+                localStorage.removeItem("acto");
+                localStorage.removeItem("usid");
+                document.location.reload();
+            });
+        }
+        else{
+            const go = async () => {
+                let res = await axios('/get-info');
+                setParticipants(res.data.participants);
+                setAnonymous(true)
+                setLoaded(true);
+            }
+            go();
+        }
+    },[])
+
     return (
         <div className="App">
-            <button onClick={loginWithFacebook}>Fb</button>
-            {/* {token && id ? <div></div> : <button onClick={loginWithFacebook}>Fb</button>} */}
+            {loaded ? <Main click={loginWithFacebook} alreadyVoted={alreadyVoted} anonymous={anonymous} senderName={name} participants={participants} facebook={id}/> : 'Loading'}
         </div>
     );
 }
