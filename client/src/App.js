@@ -27,7 +27,10 @@ function App() {
                 res.data.participants && setParticipants(res.data.participants)
                 res.data.person.voted && setAlreadyVoted(res.data.person.voted);
                 setLoaded(true);
-                document.location.reload();
+                setLoaded(false);
+                setLoaded(true);
+                setAnonymous(null);
+                // document.location.reload();
             }).catch((err)=>{
                 localStorage.removeItem("acto");
                 localStorage.removeItem("usid");

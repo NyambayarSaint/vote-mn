@@ -76,11 +76,11 @@ const Container = styled.div`
         background:rgba(0,0,0,0.6);
         .content{
             position:relative;
-            padding:60px;
+            padding:60px 5vw;
             background:white;
+            max-width:100vw;
             .fb-con{
-                min-width:300px;
-                width:350px;
+                max-width:100%;
                 background: rgb(59,89,152);
                 color: white;
                 padding: 10px 15px;
