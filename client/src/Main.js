@@ -44,8 +44,8 @@ const Main = ({ participants, facebook, senderName, alreadyVoted, anonymous, cli
                     <motion.div initial={{opacity:0}} animate={{opacity:1, transition: {duration: 0.3}}} exit={{opacity:0}} id="dialog">
                         <div className="content">
                             <h4>{error}</h4>
-                            {anonymous && <div className="fb-con" onClick={click}><FaFacebookF className="f"/>Continue with Facebook</div>}
-                            {!anonymous && <div className="fb-con"><FaFacebookF className="f"/>Logged in as {senderName}</div>}
+                            {anonymous && <div className="fb-con" onClick={click}><FaFacebookF className="f"/><p>Continue with Facebook</p></div>}
+                            {!anonymous && <div className="fb-con"><FaFacebookF className="f"/><p>Logged in as {senderName}</p></div>}
                             <AiOutlineClose className="x" onClick={()=>setError('')}/>
                         </div>
                     </motion.div>
@@ -87,6 +87,10 @@ const Container = styled.div`
                 position: relative;
                 text-align: center;
                 margin-top:20px;
+                p{
+                    margin:0px;
+                    margin-left:25px;
+                }
                 .f{
                     position: absolute;
                     left: 15px;

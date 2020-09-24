@@ -39,7 +39,7 @@ function App() {
         },{scope: 'public_profile,email'});
         }
         else{
-        document.location.reload();
+            document.location.reload();
         }
     };
 
