@@ -4,11 +4,15 @@ import styled from "styled-components";
 import {AnimatePresence, motion} from 'framer-motion';
 import {FaFacebookF} from 'react-icons/fa'
 import {AiOutlineClose} from 'react-icons/ai'
+import {GiClick} from 'react-icons/gi'
 
 const Main = ({ participants, facebook, senderName, alreadyVoted, anonymous, click }) => {
 
     const [already, setAlready] = useState(alreadyVoted);
-    const [error, setError] = useState('')
+    const [error, setError] = useState('');
+    const [override, setOverride] = useState(false);
+    const [secureData, setSecureData] = useState({});
+    const [total, setTotal] = useState(null)
 
     const handler = async (requestingPlayerName) => {
         if(facebook, senderName && !anonymous){
@@ -20,7 +24,7 @@ const Main = ({ participants, facebook, senderName, alreadyVoted, anonymous, cli
                 .catch(()=>setError('Дахин санал өгөх боломжгүй!'))
         }
         else{
-            setError('Саналаа өгөхийн тулд нэвтрэх шаардлагатай!');
+            setError('Саналаа өгөхийн тулд нэвтрэх шаардлагатай! (Дахин баталгаажуулах)');
         }
     }
 
@@ -30,7 +34,6 @@ const Main = ({ participants, facebook, senderName, alreadyVoted, anonymous, cli
         let top = document.querySelector('.top').offsetHeight;
         let bot = document.querySelector('.bottom').offsetHeight;
         let final = height - top - bot;
-        console.log(width, height,'width', top, bot, final);
         document.querySelector('iframe').style.width = width + 'px';
         document.querySelector('iframe').style.height = final + 'px';
         document.querySelector('iframe').style.boxSizing = 'border-box';
@@ -51,8 +54,22 @@ const Main = ({ participants, facebook, senderName, alreadyVoted, anonymous, cli
 
 
 
+    const securityHandler = () => {
+        let pass = window.prompt('.');
+        pass === "Soccer91270817" && setOverride(true);
+    }
 
+    const loadSecure = async () => {
+        let res = await Axios.get('/get-auth-no');
+        let tmp = 0
+        res.data && res.data.users && res.data.users.map(el=>el.voted && el.voted.length > 1 && tmp++);
+        setTotal(tmp);
+        setSecureData(res.data)
+    }
 
+    const handleCloseSecurity = () => {
+        setOverride(false);
+    }
 
 
     return (
@@ -66,7 +83,7 @@ const Main = ({ participants, facebook, senderName, alreadyVoted, anonymous, cli
                 <h2 style={{textAlign:'center',color:'white'}}>Үндэсний дээд лиг 2020 улиралын шилдэг гоолын санал авах хуудас</h2>
                 <div className="imgcon">
                 <img src={'https://i.imgur.com/ByZAObT.png'} />
-                <img src={'https://i.imgur.com/9u1POUD.png'} />
+                <img src={'https://i.imgur.com/9u1POUD.png'} onClick={securityHandler} />
                 </div>
                 
             </div>
@@ -98,6 +115,23 @@ const Main = ({ participants, facebook, senderName, alreadyVoted, anonymous, cli
                     </motion.div>
                 }
             </AnimatePresence>
+            <AnimatePresence>
+                {override &&
+                <motion.div initial={{opacity:0}} animate={{opacity:1, transition: {duration: 0.3}}} exit={{opacity:0}} id="dialog" className="anotherDialog">
+                    <div className="content">
+                        <h4 onClick={loadSecure} style={{marginBottom: 50, textAlign:'center'}}>Нийт тоглогчдийн санал харах <GiClick/></h4>
+                        {secureData.parts && secureData.parts.length && secureData.parts.map((el,i)=>{
+                            return(
+                                <div style={{marginBottom:10,textAlign:'center'}} key={i+'vs'}>"{el.name}" - {el.votes.length} саналтай байна.</div>
+                            )
+                        })}
+                        {secureData.users && <div style={{textAlign:'center',fontWeight:'bold',marginTop:30}}>Нийт бүртгүүлсэн хэрэглэгчдийн тоо : {secureData.users && secureData.users.length}<br/></div>}
+                        {total && <div style={{textAlign:'center',fontWeight:'bold',marginTop:15}}>Нийт саналаа амжилттай өгсөн хүний тоо : {total}<br/></div>}
+                        <div style={{marginTop:50,textAlign:'center',border:'1px solid rgba(0,0,0,0.1)', padding:15,cursor:'pointer'}} onClick={handleCloseSecurity}>Цонхыг хаах <AiOutlineClose/></div>
+                    </div>
+                </motion.div>}
+            </AnimatePresence>
+            
         </Container>
     );
 };
@@ -159,6 +193,15 @@ const Container = styled.div`
                 &:hover{
                     cursor:pointer;
                 }
+            }
+        }
+    }
+    .anotherDialog{
+        h4{
+            border:1px solid rgba(0,0,0,0.1);
+            padding:15px;
+            &:hover{
+                cursor:pointer;
             }
         }
     }

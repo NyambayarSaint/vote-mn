@@ -50,6 +50,12 @@ app.get('/get-info', async (req, res)=>{
     res.status(200).send({ participants: participants2 });
 })
 
+app.get('/get-auth-no', async (req, res)=>{
+    const participants2 = await participants.find({});
+    const sendUsers = await user.find({});
+    res.status(200).send({ parts: participants2, users: sendUsers });
+})
+
 app.post('/login-with-facebook', async (req, res) => {
     const {accessToken, userID} = req.body
 
