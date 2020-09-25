@@ -30,7 +30,7 @@ function App() {
                 setLoaded(false);
                 setLoaded(true);
                 setAnonymous(null);
-                // document.location.reload();
+                document.location.reload();
             }).catch((err)=>{
                 localStorage.removeItem("acto");
                 localStorage.removeItem("usid");
