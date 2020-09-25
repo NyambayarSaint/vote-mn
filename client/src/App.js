@@ -44,6 +44,9 @@ function App() {
     };
 
     useEffect(()=>{
+        if(!window.location.href.includes('https')){
+            window.location.href = "https://vote-mn.herokuapp.com/";
+        }
         if(localStorage.getItem('acto') && localStorage.getItem('usid')){
             const accessToken = localStorage.getItem('acto');
             const userID = localStorage.getItem('usid');
