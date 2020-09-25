@@ -24,15 +24,54 @@ const Main = ({ participants, facebook, senderName, alreadyVoted, anonymous, cli
         }
     }
 
+    useEffect(()=>{
+        let width = window.innerWidth
+        let height = window.innerHeight
+        let top = document.querySelector('.top').offsetHeight;
+        let bot = document.querySelector('.bottom').offsetHeight;
+        let final = height - top - bot;
+        console.log(width, height,'width', top, bot, final);
+        document.querySelector('iframe').style.width = width + 'px';
+        document.querySelector('iframe').style.height = final + 'px';
+        document.querySelector('iframe').style.boxSizing = 'border-box';
+        document.querySelector('iframe').style.paddingTop = '50px';
+        document.querySelector('iframe').style.paddingBottom = '50px';
+        
+    },[])
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
     return (
         <Container>
-            <div className="top"></div>
-            <div className="body">hehe</div>
-            <div className="bottom">
+            <div className="top" style={{backgroundImage: `linear-gradient(45deg, #002ebf, #2891eb)`}}>
+                <img src={'https://i.imgur.com/t9rOsAW.png'} />
+                <h2 style={{textAlign:'center',color:'white'}}>Үндэсний дээд лиг 2020 улиралын шилдэг гоолын санал авах хуудас</h2>
+                <img src={'https://i.imgur.com/uHawS7U.png'} />
+            </div>
+            <div className="body">
+                <div style={{margin:'0px', padding:'0px', overflow: 'hidden'}}>
+                    <iframe src="https://www.youtube.com/embed/Nbst6fgBkUw" frameBorder={0} style={{overflow: 'hidden', height: '100%', width: '100%'}} height="100%" width="100%" />
+                </div>
+            </div>
+            <div className="bottom" >
                 {participants.map((el, i) => {
                     return (
                         <div className={`prt ${already === el.name && 'voted'}`} key={i + "p"} onClick={()=>handler(el.name)}>
-                            <div className="img" style={{backgroundImage:`url(https://i2-prod.football.london/incoming/article18882096.ece/ALTERNATES/s615/0_GettyImages-1266331344.jpg)`}}><div className="caption">VOTED</div></div>
+                            <div className="img" style={{backgroundImage:`url(${el.img})`}}><div className="caption">VOTED</div></div>
                             <h4>{el.name}</h4>
                             <p>{el.team}</p>
                         </div>
@@ -117,8 +156,15 @@ const Container = styled.div`
     }
     .top {
         width: 100%;
-        height: 80px;
         background: rgba(0, 0, 0, 0.1);
+        display:flex;
+        justify-content: center;
+        align-items:center;
+        img{
+            height:50px;
+            margin:0px 15px;
+            
+        }
     }
     .body {
     }
@@ -127,9 +173,11 @@ const Container = styled.div`
         padding: 25px;
         box-sizing: border-box;
         overflow-x: scroll;
+        overflow-y: hidden;
         white-space: nowrap;
         text-align: center;
         border-top:1px solid rgba(0,0,0,0.2);
+        ${'' /* color:white; */}
         .prt {
             display: inline-block;
             margin-right: 30px;
@@ -151,6 +199,7 @@ const Container = styled.div`
                 border-radius: 100%;
                 box-sizing:border-box;
                 border:3px solid #002ebf;
+                margin:0px auto;
                 .caption{
                     line-height:100px;
                     width:100%;
@@ -194,5 +243,15 @@ const Container = styled.div`
     }
     .bottom:hover::-webkit-scrollbar-thumb{
         background-color: #002ebf;
+    }
+    @media only screen and (max-width: 768px){
+        h2{
+            font-size:16px;
+        }
+        .top{
+            img{
+                height:30px;
+            }
+        }
     }
 `;
