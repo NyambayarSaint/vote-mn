@@ -58,9 +58,17 @@ const Main = ({ participants, facebook, senderName, alreadyVoted, anonymous, cli
     return (
         <Container>
             <div className="top" style={{backgroundImage: `linear-gradient(45deg, #002ebf, #2891eb)`}}>
+                <div className="imgcon">
                 <img src={'https://i.imgur.com/t9rOsAW.png'} />
-                <h2 style={{textAlign:'center',color:'white'}}>Үндэсний дээд лиг 2020 улиралын шилдэг гоолын санал авах хуудас</h2>
                 <img src={'https://i.imgur.com/uHawS7U.png'} />
+                </div>
+                
+                <h2 style={{textAlign:'center',color:'white'}}>Үндэсний дээд лиг 2020 улиралын шилдэг гоолын санал авах хуудас</h2>
+                <div className="imgcon">
+                <img src={'https://i.imgur.com/ByZAObT.png'} />
+                <img src={'https://i.imgur.com/9u1POUD.png'} />
+                </div>
+                
             </div>
             <div className="body">
                 <div style={{margin:'0px', padding:'0px', overflow: 'hidden'}}>
@@ -165,6 +173,9 @@ const Container = styled.div`
             margin:0px 15px;
             
         }
+        .imgcon{
+            display:flex;
+        }
     }
     .body {
     }
@@ -251,6 +262,18 @@ const Container = styled.div`
         .top{
             img{
                 height:30px;
+            }
+            .imgcon{
+                flex-direction:column;
+                img{
+                    &:first-child{
+                        margin-bottom:7.5px;
+                        margin-top:15px;
+                    }
+                    &:last-child{
+                        margin-bottom:15px;
+                    }
+                }
             }
         }
     }
