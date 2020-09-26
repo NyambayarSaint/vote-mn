@@ -82,7 +82,7 @@ const Main = ({ participants, facebook, senderName, alreadyVoted, anonymous, cli
                 
                 <h2 style={{textAlign:'center',color:'white'}}>Үндэсний дээд лиг 2020 улиралын шилдэг гоолын санал авах хуудас</h2>
                 <div className="imgcon">
-                <img style={{width:40,height:40}} src={'https://i.imgur.com/9u1POUD.png'} onClick={securityHandler} />
+                <img style={{minWidth:40,minHeight:40}} src={'https://i.imgur.com/9u1POUD.png'} onClick={securityHandler} />
                 <img src={'https://i.imgur.com/ByZAObT.png'} />
                 </div>
                 
